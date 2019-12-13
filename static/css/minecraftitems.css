@@ -1,0 +1,17 @@
+.sprite {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 1rem;
+}
+ display: inline-block;
+.dropdownScroller {
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.itemDisplayer {
+  display: inline-block;
+  background-color: #f8f9fa;
+  padding: 4px;
+}

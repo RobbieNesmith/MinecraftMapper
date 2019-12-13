@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Edit path</title>
+</head>
+<body>
+<form action="/api/paths/edit" method="post">
+    <fieldset>
+        <legend>Starting coords</legend>
+        <input name="firstx" type="number" step="0.5" value="{{ path['startX'] }}" />
+        <input name="firstz" type="number" step="0.5" value="{{ path['startZ'] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>Overworld coords</legend>
+        <input name="secondx" type="number" step="0.5" value="{{ path['endX'] }}" />
+        <input name="secondz" type="number" step="0.5" value="{{ path['endZ'] }}" />
+    </fieldset>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

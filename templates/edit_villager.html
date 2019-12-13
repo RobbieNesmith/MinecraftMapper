@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Edit Villager</title>
+</head>
+<body>
+<form action="/api/villagers/edit" method="post">
+    <fieldset>
+        <legend>Villager information</legend>
+        <input name="locationid" type="number" value="{{ villager['locationId'] }}" />
+        <input name="id" type="hidden" value="{{ villager['id'] }}" />
+        <input name="name" value="{{ villager['name'] }}" />
+        <input name="type" value="{{ villager['type'] }}" />
+    </fieldset>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

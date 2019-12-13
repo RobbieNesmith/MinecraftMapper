@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+  <head>
+    <!-- My stuff -->
+    <link rel="stylesheet" type="text/css" href="/static/css/netherbuilder.css">
+    <script src="/static/js/netherbuilder.js" type="text/javascript"></script>
+    
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="/static/css/L.SimpleGraticule.css" />
+    <script src="/static/js/L.SimpleGraticule.js" type="text/javascript"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js" crossorigin="anonymous"></script>
+
+  </head>
+  <body onload="setupMap()">
+    <div id="map"></div>
+    <div id="floatingButtonHolder">
+      <div class="mb-2">
+        <button id="newVertex" class="btn btn-primary" data-toggle="modal" data-target="#vertexModal">New point of interest</button>
+      </div>
+      <div class="mb-2">
+        <button id="newPath" class="btn btn-primary" data-toggle="modal" data-target="#pathModal">New path segment</button>
+      </div>
+    </div>
+    
+    <!-- Add forms -->
+    
+    <form id="newVertexForm" action="/api/vertices/add" method="post">
+      <div class="modal fade" id="vertexModal" tabindex="-1" role="dialog" aria-labelledby="vertexModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="vertexModalLabel">Add a new point of interest</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="poiName">Name</label>
+                <input type="text" class="form-control" id="poiName" name="name" aria-describedby="poiNameHelp">
+                <small id="poiNameHelp" class="form-text text-muted">A short name for this point of interest</small>
+              </div>
+              <label for="poiNetherCoords">Nether Coords</label>
+              <div id="poiNetherCoords" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="poiNetherX" name="netherx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="poiNetherZ" name="netherz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <label for="poiOverworldCoords">Overworld Coords</label>
+              <div id="poiOverworldCoords" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="poiOverworldX" name="overx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="poiOverworldZ" name="overz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="poiDescription">Description</label>
+                <textarea class="form-control" id="poiDescription" name="description" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+    <form id="newPathForm" action="/api/paths/add" method="post">
+      <div class="modal fade" id="pathModal" tabindex="-1" role="dialog" aria-labelledby="pathModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="pathModalLabel">Add a new path</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label for="pathStart">Path start</label>
+              <div id="pathStart" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="pathStartX" name="firstx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="pathStartZ" name="firstz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <label for="pathEnd">Path end</label>
+              <div id="pathEnd" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="pathEndX" name="secondx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="pathEndZ" name="secondz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+    <!-- Edit forms -->
+
+    <form id="editVertexForm" action="/api/vertices/edit" method="post">
+      <div class="modal fade" id="editVertexModal" tabindex="-1" role="dialog" aria-labelledby="editVertexModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editVertexModalLabel">Edit <span id="editVertName"></span></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="editPoiName">Name</label>
+                <input type="text" class="form-control" id="editPoiName" name="name" aria-describedby="editPoiNameHelp">
+                <small id="editPoiNameHelp" class="form-text text-muted">A short name for this point of interest</small>
+                <input type="hidden" id="editPoiId" name="id" />
+              </div>
+              <label for="editPoiNetherCoords">Nether Coords</label>
+              <div id="editPoiNetherCoords" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPoiNetherX" name="netherx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPoiNetherZ" name="netherz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <label for="editPoiOverworldCoords">Overworld Coords</label>
+              <div id="editPoiOverworldCoords" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPoiOverworldX" name="overx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPoiOverworldZ" name="overz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="editPoiDescription">Description</label>
+                <textarea class="form-control" id="editPoiDescription" name="description" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+    <form id="editPathForm" action="/api/paths/edit" method="post">
+      <div class="modal fade" id="editPathModal" tabindex="-1" role="dialog" aria-labelledby="editPathModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editPathModalLabel">Edit path</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="editPathId" name="id" />
+              <label for="editPathStart">Path start</label>
+              <div id="editPathStart" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPathStartX" name="firstx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPathStartZ" name="firstz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <label for="editPathEnd">Path end</label>
+              <div id="editPathEnd" class="form-group">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPathEndX" name="secondx" step="0.5">
+                    </div>
+                    <div class="col-sm">
+                      <input type="number" class="form-control" id="editPathEndZ" name="secondz" step="0.5">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    
+  </body>
+</html>

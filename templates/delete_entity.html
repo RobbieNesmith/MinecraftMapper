@@ -1,0 +1,12 @@
+<html>
+<head>
+<title>Delete {{ entity }}</title>
+</head>
+<body>
+<h1>Delete {{ entity }} #{{ id }}?</h1>
+<form action="/api/{{ entity }}/delete" method="post">
+    <input name="id" type="hidden" value="{{ id }}" />
+    <button type="submit">Delete</button>
+</form>
+</body>
+</html>

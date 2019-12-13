@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Edit trade</title>
+</head>
+<body>
+<form action="/api/trades/edit" method="post">
+    <fieldset>
+        <legend>Villager ID</legend>
+        <input name="villagerid" type="number" value="{{ trade['villagerId'] }}" />
+        <input name="id" type="hidden" value="{{ trade['id'] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>First Item</legend>
+        <input name="item1" value="{{ trade['item1'] }}" />
+        <input name="item1amt" value="{{ trade['item1amt'] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>Second Item</legend>
+        <input name="item2" value="{{ trade['item2'] }}" />
+        <input name="item2amt" value="{{ trade['item2amt'] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>Third Item</legend>
+        <input name="item3" value="{{ trade['item3'] }}" />
+        <input name="item3amt" value="{{ trade['item3amt'] }}" />
+    </fieldset>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

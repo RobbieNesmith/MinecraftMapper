@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Add trade</title>
+</head>
+<body>
+<form action="/api/trades/add" method="post">
+    <fieldset>
+        <legend>Villager ID</legend>
+        <input name="villagerid" type="number" />
+    </fieldset>
+    <fieldset>
+        <legend>First Item</legend>
+        <input name="item1" />
+        <input name="item1amt" />
+    </fieldset>
+    <fieldset>
+        <legend>Second Item</legend>
+        <input name="item2" />
+        <input name="item2amt" />
+    </fieldset>
+    <fieldset>
+        <legend>Third Item</legend>
+        <input name="item3" />
+        <input name="item3amt" />
+    </fieldset>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Add vertex</title>
+</head>
+<body>
+<form action="/api/vertices/add" method="post">
+    <fieldset>
+        <legend>Name</legend>
+        <input name="name" type="text" />
+    </fieldset>
+    <fieldset>
+        <legend>Nether coords</legend>
+        <input name="netherx" type="number" step="0.5" />
+        <input name="netherz" type="number" step="0.5" />
+    </fieldset>
+    <fieldset>
+        <legend>Overworld coords</legend>
+        <input name="overx" type="number" step="0.5" />
+        <input name="overz" type="number" step="0.5" />
+    </fieldset>
+    <fieldset>
+        <legend>Description</legend>
+        <textarea name="description"></textarea>
+    </fieldset>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

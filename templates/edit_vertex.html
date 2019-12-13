@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Edit vertex</title>
+</head>
+<body>
+<form action="/api/vertices/edit" method="post">
+    <fieldset>
+        <legend>Name</legend>
+        <input name="name" type="text" value="{{ vertex['name'] }}"/>
+        <input name="id" type="hidden" value="{{ vertex['id'] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>Nether coords</legend>
+        <input name="netherx" type="number" step="0.5" value="{{ vertex['netherCoords'][0] }}" />
+        <input name="netherz" type="number" step="0.5" value="{{ vertex['netherCoords'][1] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>Overworld coords</legend>
+        <input name="overx" type="number" step="0.5" value="{{ vertex['overworldCoords'][0] }}" />
+        <input name="overz" type="number" step="0.5" value="{{ vertex['overworldCoords'][1] }}" />
+    </fieldset>
+    <fieldset>
+        <legend>Description</legend>
+        <textarea name="description">{{ vertex['description'] }}</textarea>
+    </fieldset>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
