@@ -13,9 +13,12 @@ class ItemSelector extends React.Component {
   }
 
   componentDidMount() {
-    fetch("/itemDict.json")
-        .then(res => res.json())
-        .then(json => this.setState({items: json}));
+    let itemDict = {}
+    let itemsStr = document.getElementById("appdata").dataset.itemDict;
+    if (itemsStr) {
+      itemDict = JSON.parse(itemsStr);
+    }
+    this.setState({items: itemDict});
   }
 
   render() {

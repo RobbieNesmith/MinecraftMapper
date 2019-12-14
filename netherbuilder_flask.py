@@ -344,17 +344,16 @@ def delete_trade():
 
 @app.route("/trades", methods=["GET"])
 def list_trades_for_vertex():
+    itemJson = "{}"
+    with open("itemDict.json") as itemDict:
+        itemJson = itemDict.read()
+    
     vert_id = request.args.get("id")
     
     vertex = _get_vertex(vert_id)
     villagers = _get_villagers_for_vertex(vert_id)
     
-    return render_template("tradelist.html", vertex=vertex, villagers=json.dumps(villagers))
-
-@app.route("/itemDict.json", methods=["GET"])
-def get_item_dict():
-    with open("itemDict.json") as itemDict:
-        return jsonify(json.loads(itemDict.read()))
+    return render_template("tradelist.html", vertex=vertex, itemDict=itemJson, villagers=json.dumps(villagers))
 
 if __name__ == "__main__":
     init_tables()

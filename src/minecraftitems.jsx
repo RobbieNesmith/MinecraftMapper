@@ -21,7 +21,7 @@ class Header extends React.Component {
   render() {
     return (
       <header>
-        <h1>Trades for Village</h1>
+        <h1>Trades for { document.getElementById("appdata").dataset.vertexName }</h1>
         <Button href="/" variant="primary">Back to map</Button>
       </header>
     );
@@ -56,10 +56,22 @@ class TradeSet extends React.Component {
               );
             }
           )}
-          
+          <Col xs={12} lg={6}>
+            <AddVillager />
+          </Col>
         </Row>
       </Container>
     );
+  }
+}
+
+class AddVillager extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  
+  render() {
+    return <Button block>Add new Villager</Button>
   }
 }
 
@@ -90,9 +102,12 @@ class ItemDisplayer extends React.Component {
   }
   
   componentDidMount() {
-    fetch("/itemDict.json")
-        .then(res => res.json())
-        .then(json => this.setState({items: json, ready: true}));
+    let itemDict = {}
+    let itemsStr = document.getElementById("appdata").dataset.itemDict;
+    if (itemsStr) {
+      itemDict = JSON.parse(itemsStr);
+    }
+    this.setState({items: itemDict, ready: true});
   }
   
   render() {
