@@ -188,6 +188,17 @@ def _get_villagers_for_vertex(vert_id):
             villager["trades"] = get_all_trades_for_villager(villager["id"])
     return villagers
 
+def _get_villager(villager_id):
+        villager = {}
+        with sqlite3.connect(DB_NAME) as dbconn:
+            cursor = dbconn.cursor()
+            cursor.execute("SELECT * FROM villagers WHERE id=?", (villager_id,))
+            v = cursor.fetchone()
+            cursor.close()
+            if v:
+                villager = {"id": v[0], "locationId": v[1], "name": v[2], "type": v[3], "trades": []}
+        return villager 
+
 @app.route("/api/villagers/list", methods=["GET"])
 def get_all_villagers():
     villagers = []
@@ -223,21 +234,15 @@ def add_villager():
             cursor = dbconn.cursor()
             cursor.execute("INSERT INTO villagers(locationid, name, type) values (?, ?, ?)", (locationid, name, type))
             dbconn.commit()
+            villager_id = cursor.lastrowid
             cursor.close()
-        return redirect(url_for("map_page"))
+        return jsonify(_get_villager(villager_id))   
 
 @app.route("/api/villagers/edit", methods=["GET", "POST"])
 def edit_villager():
     villager_id = request.form.get("id") or request.args.get("id")
     if request.method == "GET":
-        villager = {}
-        with sqlite3.connect(DB_NAME) as dbconn:
-            cursor = dbconn.cursor()
-            cursor.execute("SELECT * FROM villagers WHERE id=?", (villager_id,))
-            v = cursor.fetchone()
-            cursor.close()
-            if v:
-                villager = {"id": v[0], "locationId": v[1], "name": v[2], "type": v[3]}
+        villager = _get_villager(villager_id)
         if villager:
             return render_template("edit_villager.html", villager=villager)
         else:

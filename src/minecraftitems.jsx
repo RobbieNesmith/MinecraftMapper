@@ -21,9 +21,15 @@ class Header extends React.Component {
   }
   
   render() {
+    let vertex = {}
+    let vertexString = document.getElementById("appdata").dataset.vertex;
+
+    if (vertexString) {
+      vertex = JSON.parse(vertexString);
+    }
     return (
       <header>
-        <h1>Trades for { document.getElementById("appdata").dataset.vertex.name }</h1>
+        <h1>Trades for { vertex.name }</h1>
         <Button href="/" variant="primary">Back to map</Button>
       </header>
     );
@@ -54,8 +60,8 @@ class TradeSet extends React.Component {
   }
 
   addVillager() {
-    console.log(this.state);
     let formData = new FormData();
+    let vList = this.state.villagersList;
 
     formData.append("locationid", this.state.vertex.id);
     formData.append("name", document.getElementById("NewVillagerName").value);
@@ -66,7 +72,11 @@ class TradeSet extends React.Component {
           body: formData
         })
       .then(res => res.json())
-      .then(json => console.log(json))
+      .then(json => {
+        vList.push(json);
+        this.setState({showAddVillager: false, villagersList: vList});
+      })
+
   }
 
   render() {
