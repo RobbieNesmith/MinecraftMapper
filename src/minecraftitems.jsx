@@ -7,8 +7,10 @@ import Row from "react-bootstrap/Row";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import ListGroup from "react-bootstrap/ListGroup";
+import Modal from "react-bootstrap/Modal";
 
 import Item from "./Components/Item";
 import ItemSelector from "./Components/ItemSelector";
@@ -21,7 +23,7 @@ class Header extends React.Component {
   render() {
     return (
       <header>
-        <h1>Trades for { document.getElementById("appdata").dataset.vertexName }</h1>
+        <h1>Trades for { document.getElementById("appdata").dataset.vertex.name }</h1>
         <Button href="/" variant="primary">Back to map</Button>
       </header>
     );
@@ -31,47 +33,86 @@ class Header extends React.Component {
 class TradeSet extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {villagersList: []};
+    this.state = {villagersList: [], vertex: {}};
   }
   
   componentDidMount() {
-    let villagersString = document.getElementById("appdata").dataset.villagers;
+    let appDataEl = document.getElementById("appdata")
+    let villagersString = appDataEl.dataset.villagers;
+    let vertexString = appDataEl.dataset.vertex;
     let villagersList = [];
+    let vertex = {};
     if (villagersString) {
       villagersList = JSON.parse(villagersString);
     }
+    if (vertexString) {
+        vertex = JSON.parse(vertexString);
+    }
     
-    this.setState({villagersList: villagersList});
+    this.setState({villagersList: villagersList, vertex: vertex, showAddVillager: false});
+    this.addVillager = this.addVillager.bind(this);
   }
-  
+
+  addVillager() {
+    console.log(this.state);
+    let formData = new FormData();
+
+    formData.append("locationid", this.state.vertex.id);
+    formData.append("name", document.getElementById("NewVillagerName").value);
+    formData.append("type", document.getElementById("NewVillagerType").value);
+    fetch("/api/villagers/add",
+        {
+          method: "POST",
+          body: formData
+        })
+      .then(res => res.json())
+      .then(json => console.log(json))
+  }
+
   render() {
     return (
-      <Container>
-        <Row>
-          { this.state.villagersList.map(villager => {
-              return (
-                <Col xs={12} lg={6}>
-                  <Villager name={ villager.name } trades={ villager.trades } />
-                </Col>
-              );
-            }
-          )}
-          <Col xs={12} lg={6}>
-            <AddVillager />
-          </Col>
-        </Row>
-      </Container>
+      <div>
+	      <Container>
+		<Row>
+		  { this.state.villagersList.map(villager => {
+		      return (
+			<Col xs={12} lg={6}>
+			  <Villager name={ villager.name } trades={ villager.trades } />
+			</Col>
+		      );
+		    }
+		  )}
+		  <Col xs={12} lg={6}>
+		    <Button block onClick={ () => this.setState({showAddVillager: true}) }>Add new Villager</Button>
+		  </Col>
+		</Row>
+	      </Container>
+        <Form>
+          <Modal
+      show={ this.state.showAddVillager  }
+      onHide={ () => this.setState({showAddVillager: false}) }
+          >
+      <Modal.Header closeButton>
+        <Modal.Title>Add New Villager</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form.Group controlId="NewVillagerName">
+          <Form.Label>Villager Name</Form.Label>
+          <FormControl />
+        </Form.Group>
+        <Form.Group controlId="NewVillagerType">
+          <Form.Label>Villager Type</Form.Label>
+          <FormControl />
+        </Form.Group>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={ this.addVillager }>Add</Button>
+        <Button variant="secondary" onClick={ () => this.setState({showAddVillager: false}) }>Cancel</Button>
+      </Modal.Footer>
+          </Modal>
+        </Form>
+      </div>
     );
-  }
-}
-
-class AddVillager extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  
-  render() {
-    return <Button block>Add new Villager</Button>
   }
 }
 
@@ -89,6 +130,9 @@ class Villager extends React.Component {
               return <Trade mode="display" offer={ {item1: trade.item1, item2: trade.item2, item3: trade.item3} } />;
             })
           }
+	    <ListGroup.Item>
+	      <Button block variant="secondary">Add new trade</Button>
+	    </ListGroup.Item>
         </ListGroup>
       </Card>
     );

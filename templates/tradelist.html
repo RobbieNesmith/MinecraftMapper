@@ -4,13 +4,12 @@
   <head>
   <title>Villagers at {{ vertex.name }}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/minecraftitems.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
-
+    <link rel="stylesheet" href="/static/include/bootstrap.min.css">
   </head>
   <body>
     <header>
     </header>
-    <div id="appdata" data-vertex-name="{{ vertex.name }}" data-villagers="{{ villagers }}" data-item-dict="{{ itemDict }}"></div>
+    <div id="appdata" data-vertex='{{ vertex|tojson|safe }}' data-villagers="{{ villagers }}" data-item-dict="{{ itemDict }}"></div>
     <div id="app"></div>
   </body>
   <script src="/static/js/minecraftitems.js"></script>
