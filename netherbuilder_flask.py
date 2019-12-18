@@ -257,7 +257,7 @@ def edit_villager():
             cursor.execute("UPDATE villagers SET locationid=?, name=?, type=? WHERE id=?", (locationid, name, type, villager_id))
             dbconn.commit()
             cursor.close()
-        return redirect(url_for("map_page"))
+        return jsonify(_get_villager(villager_id))
 
 @app.route("/api/villagers/delete", methods=["GET", "POST"])
 def delete_villager():

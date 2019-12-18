@@ -57,6 +57,7 @@ class TradeSet extends React.Component {
     
     this.setState({villagersList: villagersList, vertex: vertex, showAddVillager: false});
     this.addVillager = this.addVillager.bind(this);
+    this.editVillager = this.editVillager.bind(this);
     this.deleteVillager = this.deleteVillager.bind(this);
   }
 
@@ -93,7 +94,11 @@ class TradeSet extends React.Component {
         body: formData
       })
     .then(res => res.json())
-    .then(json => console.log(json))
+    .then(json => {
+      let index = vList.map(v => v.id).indexOf(id);
+      json.trades = vList[index].trades;
+      this.setState({"villagersList": [...vList.slice(0, index), json, ...vList.slice(index + 1)]})
+    })
   }
 
   deleteVillager(id) {
@@ -116,7 +121,7 @@ class TradeSet extends React.Component {
       { this.state.villagersList.map(villager => {
           return (
       <Col xs={12} lg={6}>
-        <Villager name={ villager.name } trades={ villager.trades } editHandler={ this.editVillager } deleteHandler={ this.deleteVillager } />
+        <Villager id={ villager.id } name={ villager.name } type={ villager.type } trades={ villager.trades } editHandler={ this.editVillager } deleteHandler={ this.deleteVillager } />
       </Col>
           );
         }
@@ -192,16 +197,18 @@ class Villager extends React.Component {
           <Modal.Body>
             <Form.Group controlId={ `VillagerName_${this.props.id}` }>
               <Form.Label>Villager Name</Form.Label>
-              <FormControl />
+              <FormControl value={ this.state.name } onChange={ (event) => this.setState({"name": event.target.value}) } />
             </Form.Group>
             <Form.Group controlId={ `VillagerType_${this.props.id}` }>
               <Form.Label>Villager Type</Form.Label>
-              <FormControl />
+              <FormControl value={ this.state.type } onChange={ (event) => this.setState({"type": event.target.value}) } />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={ ()=>console.log("foo") }>Add</Button>
-            <Button variant="secondary" onClick={ () => this.setState({showAddTrade: false}) }>Cancel</Button>
+            <Button variant="primary" onClick={ ()=> this.setState({showEdit: false}, ()=>this.props.editHandler(this.props.id, this.state.name, this.state.type)) }>
+              Save
+            </Button>
+            <Button variant="secondary" onClick={ () => this.setState({showEdit: false}) }>Cancel</Button>
           </Modal.Footer>
         </Modal>
 
