@@ -23,7 +23,7 @@ function generateVertexPopup(vertex) {
   netherCoords.innerText = `Nether coordinates: ${vertex.netherCoords}`;
   overworldCoords.innerText = `Overworld coordinates: ${vertex.overworldCoords}`;
   description.innerText = vertex.description;
-  footer.className = "popupFooter";
+  footer.className = "spaceItems";
   editButton.dataset.toggle = "modal";
   editButton.dataset.target = "#editVertexModal";
   editButton.addEventListener("click", () => populateEditVertexForm(vertex));
@@ -74,7 +74,7 @@ function generatePathPopup(path) {
   
   startCoords.innerText = `Starting coordinates: ${path.start}`;
   endCoords.innerText = `Ending coordinates: ${path.end}`;
-  footer.className = "popupFooter";
+  footer.className = "spaceItems";
   editButton.className = "btn btn-success";
   editButton.dataset.toggle = "modal";
   editButton.dataset.target = "#editPathModal";

@@ -270,7 +270,7 @@ def delete_villager():
             cursor.execute("DELETE FROM villagers WHERE id=?", (villager_id,))
             dbconn.commit()
             cursor.close()
-        return redirect(url_for("map_page"))
+        return jsonify({"id": villager_id})
 
 @app.route("/api/trades", methods=["GET"])
 def get_all_trades():
