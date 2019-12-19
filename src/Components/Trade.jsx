@@ -47,12 +47,15 @@ class Trade extends React.Component {
             <Row>
               <Col xs={3}>
                 <ItemDisplayer name={ offer.item1 } />
+                <span>{ offer.item1amt }</span>
               </Col>
               <Col xs={3}>
                 <ItemDisplayer name={ offer.item2 } />
+                <span>{ offer.item2amt }</span>
               </Col>
               <Col xs={6}>
                 <ItemDisplayer name={ offer.item3 } />
+                <span>{ offer.item3amt }</span>
               </Col>
             </Row>
           </Container>

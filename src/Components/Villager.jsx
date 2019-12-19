@@ -30,7 +30,7 @@ class Villager extends React.Component {
         </Card.Header>
         <ListGroup variant="flush">
           { this.props.trades.map(trade => {
-              return <Trade mode="display" offer={ {item1: trade.item1, item2: trade.item2, item3: trade.item3} } />;
+              return <Trade mode="display" offer={ trade } />;
             })
           }
           <ListGroup.Item>
