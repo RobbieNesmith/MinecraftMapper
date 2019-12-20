@@ -1,5 +1,9 @@
 import React from "react";
 
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
@@ -7,6 +11,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 
 import Trade from "./Trade";
+import ItemSelector from "./ItemSelector";
 
 class Villager extends React.Component {
   constructor(props) {
@@ -70,10 +75,52 @@ class Villager extends React.Component {
             <Modal.Title>Add New Trade for { this.props.name }</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form.Group controlId="NewTradeItem1">
-              <Form.Label>Trade item 1</Form.Label>
-              <Form.Control />
-            </Form.Group>
+            <Container>
+              <Row>
+                <Col xs="6">
+                  <Form.Group controlId="NewTradeItem1">
+                    <Form.Label>Trade item 1</Form.Label>
+                    <ItemSelector />
+                  </Form.Group>
+                </Col>
+                <Col xs="6">
+                  <Form.Group controlId="NewTradeItem1Amt">
+                    <Form.Label>Trade item 1 Amount</Form.Label>
+                    <Form.Control type="number" />
+                  </Form.Group>
+                </Col>
+              </Row>
+              
+              <Row>
+                <Col xs="6">
+                  <Form.Group controlId="NewTradeItem2">
+                    <Form.Label>Trade item 2</Form.Label>
+                    <ItemSelector />
+                  </Form.Group>
+                </Col>
+                <Col xs="6">
+                  <Form.Group controlId="NewTradeItem2Amt">
+                    <Form.Label>Trade item 2 Amount</Form.Label>
+                    <Form.Control type="number" />
+                  </Form.Group>
+                </Col>
+              </Row>
+              
+              <Row>
+                <Col xs="6">
+                  <Form.Group controlId="NewTradeItem3">
+                    <Form.Label>Trade item 3</Form.Label>
+                    <ItemSelector />
+                  </Form.Group>
+                </Col>
+                <Col xs="6">
+                  <Form.Group controlId="NewTradeItem3Amt">
+                    <Form.Label>Trade item 3 Amount</Form.Label>
+                    <Form.Control type="number" />
+                  </Form.Group>
+                </Col>
+              </Row>
+            </Container>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={ ()=>console.log("foo") }>Add</Button>
