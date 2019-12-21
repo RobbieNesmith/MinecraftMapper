@@ -22,7 +22,7 @@ class ItemSelector extends React.Component {
   }
 
   render() {
-    let dropdownText = "???";
+    let dropdownText = "None";
     if (this.state.selected) {
       dropdownText = <Item
         name={ this.state.selected }
@@ -51,7 +51,13 @@ class ItemSelector extends React.Component {
               { Object.keys(this.state.items).filter(i => i.toLowerCase().includes(this.state.filterVal.toLowerCase())).map((itemName, index) => {
                 return (
                   <Dropdown.Item
-                    onClick={ ()=>this.setState({selected: itemName}) }
+                    onClick={ () => {
+                        let changeHandler = this.props.changeHandler;
+                        if (!changeHandler instanceof Function) {
+                          changeHandler = (itemName) => {};
+                        }
+                        this.setState({selected: itemName}, changeHandler(itemName)) }
+                      }
                   >
                     <Item
                       name={ itemName }

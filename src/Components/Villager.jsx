@@ -16,7 +16,38 @@ import ItemSelector from "./ItemSelector";
 class Villager extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {showAddTrade: false, showEdit: false, name: this.props.name, type: this.props.type}
+    this.state = {showAddTrade: false,
+      showEdit: false,
+      name: this.props.name,
+      type: this.props.type,
+      newTrade: {
+        item1: "",
+        item1amt: 0,
+        item2: "",
+        item2amt: 0,
+        item3: "",
+        item3amt: 0
+      }
+    }
+    this.addTradeHandler = this.addTradeHandler.bind(this);
+  }
+  
+  addTradeHandler() {
+    let formData = new FormData();
+    formData.append("villagerid", this.props.id);
+    formData.append("item1", this.state.newTrade.item1);
+    formData.append("item1amt", this.state.newTrade.item1amt);
+    formData.append("item2", this.state.newTrade.item2);
+    formData.append("item2amt", this.state.newTrade.item2amt);
+    formData.append("item3", this.state.newTrade.item3);
+    formData.append("item3amt", this.state.newTrade.item3amt);
+    
+    fetch("/api/trades/add", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(json => console.log(json));
   }
   
   render() {
@@ -80,13 +111,13 @@ class Villager extends React.Component {
                 <Col xs="6">
                   <Form.Group controlId="NewTradeItem1">
                     <Form.Label>Trade item 1</Form.Label>
-                    <ItemSelector />
+                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item1: itemName}}) } />
                   </Form.Group>
                 </Col>
                 <Col xs="6">
                   <Form.Group controlId="NewTradeItem1Amt">
                     <Form.Label>Trade item 1 Amount</Form.Label>
-                    <Form.Control type="number" />
+                    <Form.Control type="number" onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item1amt: event.target.value}}) } />
                   </Form.Group>
                 </Col>
               </Row>
@@ -95,13 +126,13 @@ class Villager extends React.Component {
                 <Col xs="6">
                   <Form.Group controlId="NewTradeItem2">
                     <Form.Label>Trade item 2</Form.Label>
-                    <ItemSelector />
+                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item2: itemName}}) } />
                   </Form.Group>
                 </Col>
                 <Col xs="6">
                   <Form.Group controlId="NewTradeItem2Amt">
                     <Form.Label>Trade item 2 Amount</Form.Label>
-                    <Form.Control type="number" />
+                    <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item2amt: event.target.value}}) } />
                   </Form.Group>
                 </Col>
               </Row>
@@ -110,20 +141,20 @@ class Villager extends React.Component {
                 <Col xs="6">
                   <Form.Group controlId="NewTradeItem3">
                     <Form.Label>Trade item 3</Form.Label>
-                    <ItemSelector />
+                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item3: itemName}}) } />
                   </Form.Group>
                 </Col>
                 <Col xs="6">
                   <Form.Group controlId="NewTradeItem3Amt">
                     <Form.Label>Trade item 3 Amount</Form.Label>
-                    <Form.Control type="number" />
+                    <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item3amt: event.target.value}}) } />
                   </Form.Group>
                 </Col>
               </Row>
             </Container>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={ ()=>console.log("foo") }>Add</Button>
+            <Button variant="primary" onClick={ ()=>this.setState({showAddTrade: false}, this.addTradeHandler) }>Add</Button>
             <Button variant="secondary" onClick={ () => this.setState({showAddTrade: false}) }>Cancel</Button>
           </Modal.Footer>
         </Modal>
