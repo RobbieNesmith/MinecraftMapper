@@ -272,7 +272,7 @@ def delete_villager():
             cursor.close()
         return jsonify({"id": villager_id})
 
-@app.route("/api/trades", methods=["GET"])
+@app.route("/api/trades/list", methods=["GET"])
 def get_all_trades():
     trades = []
     with sqlite3.connect(DB_NAME) as dbconn:
@@ -300,7 +300,7 @@ def add_trade():
             cursor.execute("INSERT INTO trades(villagerid, item1, item2, item3, item1amt, item2amt, item3amt) values (?, ?, ?, ?, ?, ?, ?)", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt))
             dbconn.commit()
             cursor.close()
-        return redirect(url_for("get_all_trades"))
+        return jsonify(get_all_trades_for_villager(villagerid))
 
 @app.route("/api/trades/edit", methods=["GET", "POST"])
 def edit_trade():
@@ -332,7 +332,7 @@ def edit_trade():
             cursor.execute("UPDATE trades SET villagerid=?, item1=?, item2=?, item3=?, item1amt=?, item2amt=?, item3amt=? WHERE id=?", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt, trade_id))
             dbconn.commit()
             cursor.close()
-        return redirect(url_for("map_page"))
+        return jsonify(get_all_trades_for_villager(villagerid))
 
 @app.route("/api/trades/delete", methods=["GET", "POST"])
 def delete_trade():
@@ -345,7 +345,7 @@ def delete_trade():
             cursor.execute("DELETE FROM trades WHERE id=?", (trade_id,))
             dbconn.commit()
             cursor.close()
-        return redirect(url_for("map_page"))
+        return jsonify(trade_id)
 
 @app.route("/trades", methods=["GET"])
 def list_trades_for_vertex():

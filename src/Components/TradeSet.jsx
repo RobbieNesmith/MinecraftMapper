@@ -32,6 +32,7 @@ class TradeSet extends React.Component {
     this.setState({villagersList: villagersList, vertex: vertex, showAddVillager: false});
     this.addVillager = this.addVillager.bind(this);
     this.editVillager = this.editVillager.bind(this);
+    this.setVillagerTrades = this.setVillagerTrades.bind(this);
     this.deleteVillager = this.deleteVillager.bind(this);
   }
 
@@ -53,6 +54,14 @@ class TradeSet extends React.Component {
         this.setState({showAddVillager: false, villagersList: vList});
       })
 
+  }
+
+  setVillagerTrades(id, trades) {
+    let vList = this.state.villagersList;
+    let villager = this.state.villagersList.filter((v) => v.id == id)[0];
+    villager.trades = trades;
+    let index = vList.map(v => v.id).indexOf(id);
+    this.setState({"villagersList": [...vList.slice(0, index), villager, ...vList.slice(index + 1)]})
   }
 
   editVillager(id, name, type) {
@@ -95,7 +104,15 @@ class TradeSet extends React.Component {
       { this.state.villagersList.map(villager => {
           return (
       <Col xs={12} lg={6}>
-        <Villager id={ villager.id } name={ villager.name } type={ villager.type } trades={ villager.trades } editHandler={ this.editVillager } deleteHandler={ this.deleteVillager } />
+        <Villager
+          id={ villager.id }
+          name={ villager.name }
+          type={ villager.type }
+          trades={ villager.trades }
+          editHandler={ this.editVillager }
+          setTradesHandler={ this.setVillagerTrades }
+          deleteHandler={ this.deleteVillager }
+        />
       </Col>
           );
         }

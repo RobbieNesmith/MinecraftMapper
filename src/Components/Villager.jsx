@@ -47,7 +47,7 @@ class Villager extends React.Component {
       body: formData
     })
     .then(res => res.json())
-    .then(json => console.log(json));
+    .then(json => this.props.setTradesHandler(this.props.id, json));
   }
   
   render() {
