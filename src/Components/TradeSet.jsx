@@ -99,10 +99,6 @@ class TradeSet extends React.Component {
   }
   
   editTrade(villagerId, id, trade) {
-    console.log(`setting villager ${villagerId}'s trade ${id} to
-${trade.item1} x ${trade.item1amt}
-${trade.item2} x ${trade.item2amt}
-${trade.item3} x ${trade.item3amt}`);
     let formData = new FormData();
     formData.append("id", id);
     formData.append("villagerid", villagerId);
@@ -117,7 +113,15 @@ ${trade.item3} x ${trade.item3amt}`);
       body: formData
     })
     .then(res => res.json())
-    .then(json => console.log(json));
+    .then(json => {
+      let vList = this.state.villagersList;
+      let villagerIndex = vList.map(v => v.id).indexOf(villagerId);
+      let villager = vList[villagerIndex];
+      let tList = villager.trades;
+      let tradeIndex = tList.map(t => t.id).indexOf(id);
+      villager.trades = [...tList.slice(0, tradeIndex), trade, ...tList.slice(tradeIndex + 1)];
+      this.setState({"villagersList": [...vList.slice(0, villagerIndex), villager, ...vList.slice(villagerIndex + 1)]})
+    });
   }
   
   deleteTrade(id) {
