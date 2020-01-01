@@ -5,8 +5,9 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
 import Button from "react-bootstrap/Button";
-import FormControl from "react-bootstrap/FormControl";
+import Form from "react-bootstrap/Form";
 import ListGroup from "react-bootstrap/ListGroup";
+import Modal from "react-bootstrap/Modal";
 
 import ItemDisplayer from "./ItemDisplayer";
 import ItemSelector from "./ItemSelector";
@@ -14,35 +15,109 @@ import ItemSelector from "./ItemSelector";
 class Trade extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showEdit: false,
+      newTrade: {
+        item1: "",
+        item1amt: 0,
+        item2: "",
+        item2amt: 0,
+        item3: "",
+        item3amt: 0
+      }
+    };
   }
   
   render() {
     let offer = this.props.offer;
     return (
-      <ListGroup.Item>
-        <div style={{ display: "flex"}}>
-          <Container>
-            <Row>
-              <Col xs={3}>
-                <ItemDisplayer name={ offer.item1 } />
-                <span>{ offer.item1amt > 0 ? offer.item1amt : "" }</span>
-              </Col>
-              <Col xs={3}>
-                <ItemDisplayer name={ offer.item2 } />
-                <span>{ offer.item2amt > 0 ? offer.item2amt : "" }</span>
-              </Col>
-              <Col xs={6}>
-                <ItemDisplayer name={ offer.item3 } />
-                <span>{ offer.item3amt > 0 ? offer.item3amt : "" }</span>
-              </Col>
-            </Row>
-          </Container>
-            <span style={{flexGrow: 0, width: "100px"}}>
-              <Button variant="outline-success" onClick={ () => this.setState({showEdit: true})}><i className="fa fa-edit" /></Button>
-              <Button variant="outline-danger" onClick={ () => this.props.deleteHandler(this.props.offer.id) }><i className="fa fa-trash" /></Button>
-            </span>
-        </div>
-      </ListGroup.Item>
+      <span>
+        <ListGroup.Item>
+          <div style={{ display: "flex"}}>
+            <Container>
+              <Row>
+                <Col xs={3}>
+                  <ItemDisplayer name={ offer.item1 } />
+                  <span>{ offer.item1amt > 0 ? offer.item1amt : "" }</span>
+                </Col>
+                <Col xs={3}>
+                  <ItemDisplayer name={ offer.item2 } />
+                  <span>{ offer.item2amt > 0 ? offer.item2amt : "" }</span>
+                </Col>
+                <Col xs={6}>
+                  <ItemDisplayer name={ offer.item3 } />
+                  <span>{ offer.item3amt > 0 ? offer.item3amt : "" }</span>
+                </Col>
+              </Row>
+            </Container>
+              <span style={{flexGrow: 0, width: "100px"}}>
+                <Button variant="outline-success" onClick={ () => this.setState({showEdit: true})}><i className="fa fa-edit" /></Button>
+                <Button variant="outline-danger" onClick={ () => this.props.deleteHandler(this.props.offer.id) }><i className="fa fa-trash" /></Button>
+              </span>
+          </div>
+        </ListGroup.Item>
+        
+        <Modal
+            show={ this.state.showEdit  }
+            onHide={ () => this.setState({showEdit: false}) }
+          >
+          <Modal.Header closeButton>
+            <Modal.Title>Editing Trade</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Container>
+              <Row>
+                <Col xs="6">
+                  <Form.Group controlId="EditTradeItem1">
+                    <Form.Label>Trade item 1</Form.Label>
+                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item1: itemName}}) } />
+                  </Form.Group>
+                </Col>
+                <Col xs="6">
+                  <Form.Group controlId="EditTradeItem1Amt">
+                    <Form.Label>Trade item 1 Amount</Form.Label>
+                    <Form.Control type="number" onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item1amt: event.target.value}}) } />
+                  </Form.Group>
+                </Col>
+              </Row>
+              
+              <Row>
+                <Col xs="6">
+                  <Form.Group controlId="EditTradeItem2">
+                    <Form.Label>Trade item 2</Form.Label>
+                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item2: itemName}}) } />
+                  </Form.Group>
+                </Col>
+                <Col xs="6">
+                  <Form.Group controlId="EditTradeItem2Amt">
+                    <Form.Label>Trade item 2 Amount</Form.Label>
+                    <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item2amt: event.target.value}}) } />
+                  </Form.Group>
+                </Col>
+              </Row>
+              
+              <Row>
+                <Col xs="6">
+                  <Form.Group controlId="EditTradeItem3">
+                    <Form.Label>Trade item 3</Form.Label>
+                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item3: itemName}}) } />
+                  </Form.Group>
+                </Col>
+                <Col xs="6">
+                  <Form.Group controlId="EditTradeItem3Amt">
+                    <Form.Label>Trade item 3 Amount</Form.Label>
+                    <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item3amt: event.target.value}}) } />
+                  </Form.Group>
+                </Col>
+              </Row>
+            </Container>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={ ()=>this.setState({showEdit: false}, ()=>this.props.editHandler(this.props.offer.villagerId, this.props.offer.id, this.state.newTrade)) }>Save</Button>
+            <Button variant="secondary" onClick={ () => this.setState({showEdit: false}) }>Cancel</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
     );
   }
 }

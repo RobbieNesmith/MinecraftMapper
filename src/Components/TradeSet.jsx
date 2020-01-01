@@ -98,8 +98,26 @@ class TradeSet extends React.Component {
     .then(json => this.setState({villagersList: vList.filter(v => v.id != id)}));
   }
   
-  editTrade(id, trade) {
-    console.log(`setting trade ${id} to ${trade}`);
+  editTrade(villagerId, id, trade) {
+    console.log(`setting villager ${villagerId}'s trade ${id} to
+${trade.item1} x ${trade.item1amt}
+${trade.item2} x ${trade.item2amt}
+${trade.item3} x ${trade.item3amt}`);
+    let formData = new FormData();
+    formData.append("id", id);
+    formData.append("villagerid", villagerId);
+    formData.append("item1", trade.item1);
+    formData.append("item1amt", trade.item1amt);
+    formData.append("item2", trade.item2);
+    formData.append("item2amt", trade.item2amt);
+    formData.append("item3", trade.item3);
+    formData.append("item3amt", trade.item3amt);
+    fetch("/api/trades/edit", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(json => console.log(json));
   }
   
   deleteTrade(id) {

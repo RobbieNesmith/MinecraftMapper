@@ -66,7 +66,11 @@ class Villager extends React.Component {
         </Card.Header>
         <ListGroup variant="flush">
           { this.props.trades.map(trade => {
-              return <Trade editHandler={ this.props.editTradeHandler } deleteHandler={ this.props.deleteTradeHandler } offer={ trade } />;
+              return <Trade
+                editHandler={ this.props.editTradeHandler }
+                deleteHandler={ this.props.deleteTradeHandler }
+                offer={ trade }
+              />;
             })
           }
           <ListGroup.Item>
