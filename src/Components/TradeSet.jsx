@@ -34,6 +34,8 @@ class TradeSet extends React.Component {
     this.editVillager = this.editVillager.bind(this);
     this.setVillagerTrades = this.setVillagerTrades.bind(this);
     this.deleteVillager = this.deleteVillager.bind(this);
+    this.editTrade = this.editTrade.bind(this);
+    this.deleteTrade = this.deleteTrade.bind(this);
   }
 
   addVillager() {
@@ -95,6 +97,24 @@ class TradeSet extends React.Component {
     .then(res => res.json())
     .then(json => this.setState({villagersList: vList.filter(v => v.id != id)}));
   }
+  
+  editTrade(id, trade) {
+    console.log(`setting trade ${id} to ${trade}`);
+  }
+  
+  deleteTrade(id) {
+    let formData = new FormData();
+    formData.append("id", id);
+    fetch("/api/trades/delete", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(json => {
+      let vList = this.state.villagersList;
+      this.setState({villagersList: vList.map(v => {return {...v, trades: v.trades.filter(t => t.id != id)}})});
+    });
+  }
 
   render() {
     return (
@@ -103,17 +123,19 @@ class TradeSet extends React.Component {
     <Row>
       { this.state.villagersList.map(villager => {
           return (
-      <Col xs={12} lg={6}>
-        <Villager
-          id={ villager.id }
-          name={ villager.name }
-          type={ villager.type }
-          trades={ villager.trades }
-          editHandler={ this.editVillager }
-          setTradesHandler={ this.setVillagerTrades }
-          deleteHandler={ this.deleteVillager }
-        />
-      </Col>
+            <Col xs={12} lg={6}>
+              <Villager
+                id={ villager.id }
+                name={ villager.name }
+                type={ villager.type }
+                trades={ villager.trades }
+                editHandler={ this.editVillager }
+                setTradesHandler={ this.setVillagerTrades }
+                deleteHandler={ this.deleteVillager }
+                editTradeHandler={ this.editTrade }
+                deleteTradeHandler={ this.deleteTrade }
+              />
+            </Col>
           );
         }
       )}
