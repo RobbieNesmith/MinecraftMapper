@@ -18,7 +18,7 @@ class ItemSelector extends React.Component {
     if (itemsStr) {
       itemDict = JSON.parse(itemsStr);
     }
-    this.setState({items: itemDict});
+    this.setState({items: itemDict, selected: this.props.value});
   }
 
   render() {

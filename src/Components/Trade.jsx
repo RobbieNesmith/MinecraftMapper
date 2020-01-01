@@ -17,14 +17,7 @@ class Trade extends React.Component {
     super(props);
     this.state = {
       showEdit: false,
-      newTrade: {
-        item1: "",
-        item1amt: 0,
-        item2: "",
-        item2amt: 0,
-        item3: "",
-        item3amt: 0
-      }
+      newTrade: this.props.offer
     };
   }
   
@@ -70,13 +63,20 @@ class Trade extends React.Component {
                 <Col xs="6">
                   <Form.Group controlId="EditTradeItem1">
                     <Form.Label>Trade item 1</Form.Label>
-                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item1: itemName}}) } />
+                    <ItemSelector
+                      value={ this.state.newTrade.item1 }
+                      changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item1: itemName}}) }
+                    />
                   </Form.Group>
                 </Col>
                 <Col xs="6">
                   <Form.Group controlId="EditTradeItem1Amt">
                     <Form.Label>Trade item 1 Amount</Form.Label>
-                    <Form.Control type="number" onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item1amt: event.target.value}}) } />
+                    <Form.Control
+                      value={ this.state.newTrade.item1amt }
+                      type="number"
+                      onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item1amt: event.target.value}}) }
+                    />
                   </Form.Group>
                 </Col>
               </Row>
@@ -85,13 +85,20 @@ class Trade extends React.Component {
                 <Col xs="6">
                   <Form.Group controlId="EditTradeItem2">
                     <Form.Label>Trade item 2</Form.Label>
-                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item2: itemName}}) } />
+                    <ItemSelector
+                      value={ this.state.newTrade.item2 }
+                      changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item2: itemName}}) }
+                    />
                   </Form.Group>
                 </Col>
                 <Col xs="6">
                   <Form.Group controlId="EditTradeItem2Amt">
                     <Form.Label>Trade item 2 Amount</Form.Label>
-                    <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item2amt: event.target.value}}) } />
+                    <Form.Control
+                      value={ this.state.newTrade.item2amt }
+                      type="number"
+                      onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item2amt: event.target.value}}) }
+                    />
                   </Form.Group>
                 </Col>
               </Row>
@@ -100,13 +107,20 @@ class Trade extends React.Component {
                 <Col xs="6">
                   <Form.Group controlId="EditTradeItem3">
                     <Form.Label>Trade item 3</Form.Label>
-                    <ItemSelector changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item3: itemName}}) } />
+                    <ItemSelector
+                      value={ this.state.newTrade.item3 }
+                      changeHandler={ (itemName) => this.setState({newTrade: {...this.state.newTrade, item3: itemName}}) }
+                    />
                   </Form.Group>
                 </Col>
                 <Col xs="6">
                   <Form.Group controlId="EditTradeItem3Amt">
                     <Form.Label>Trade item 3 Amount</Form.Label>
-                    <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item3amt: event.target.value}}) } />
+                    <Form.Control
+                      value={ this.state.newTrade.item3amt }
+                      type="number"
+                      onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item3amt: event.target.value}}) }
+                    />
                   </Form.Group>
                 </Col>
               </Row>
