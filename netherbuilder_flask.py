@@ -1,25 +1,28 @@
 import json
-import sqlite3
 from flask import Flask, request, jsonify, render_template, redirect, url_for
+import os
+import psycopg2
 
 DB_NAME = "nethernetwork.db"
+DB_URL = os.environ["DATABASE_URL"]
 
 app = Flask(__name__)
 
+@app.before_first_request
 def init_tables():
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
-        cursor.execute("SELECT name from sqlite_master WHERE type='table';")
+        cursor.execute("SELECT table_name from information_schema.tables")
         existing_tables = cursor.fetchall()
         existing_tables = [a[0] for a in existing_tables]
         if "vertices" not in existing_tables:
-            cursor.execute("CREATE TABLE vertices (id integer primary key, name text, netherx real, netherz real, overx real, overz real, description string)")
+            cursor.execute("CREATE TABLE vertices (id serial primary key, name text, netherx real, netherz real, overx real, overz real, description varchar)")
         if "paths" not in existing_tables:
-            cursor.execute("CREATE TABLE paths (id integer primary key, firstx real, firstz real, secondx real, secondz real)")
+            cursor.execute("CREATE TABLE paths (id serial primary key, firstx real, firstz real, secondx real, secondz real)")
         if "villagers" not in existing_tables:
-            cursor.execute("CREATE TABLE villagers (id integer primary key, locationid integer NOT NULL, name text, type text, FOREIGN KEY(locationid) REFERENCES vertices(id))")
+            cursor.execute("CREATE TABLE villagers (id serial primary key, locationid integer NOT NULL, name text, type text, FOREIGN KEY(locationid) REFERENCES vertices(id))")
         if "trades" not in existing_tables:
-            cursor.execute("CREATE TABLE trades (id integer primary key, villagerid integer NOT NULL, item1 string, item2 string, item3 string, item1amt integer, item2amt integer, item3amt integer, FOREIGN KEY(villagerid) REFERENCES villagers(id))")
+            cursor.execute("CREATE TABLE trades (id serial primary key, villagerid integer NOT NULL, item1 varchar, item2 varchar, item3 varchar, item1amt integer, item2amt integer, item3amt integer, FOREIGN KEY(villagerid) REFERENCES villagers(id))")
         dbconn.commit()
         cursor.close()
 
@@ -29,7 +32,7 @@ def map_page():
 
 def _list_vertices():
     verts = []
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
         cursor.execute("SELECT * from vertices")
         verts = cursor.fetchall()
@@ -39,9 +42,9 @@ def _list_vertices():
 
 def _get_vertex(vert_id):
     vertex = {}
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
-        cursor.execute("SELECT * from vertices where id=?", (vert_id,))
+        cursor.execute("SELECT * from vertices where id=%s", (vert_id,))
         v = cursor.fetchone()
         if v:
             vertex = {"id": v[0], "name": v[1], "netherCoords": [v[2], v[3]], "overworldCoords": [v[4], v[5]], "description": v[6]}
@@ -64,9 +67,9 @@ def add_vertex():
         overx = request.form.get("overx")
         overz = request.form.get("overz")
         description = request.form.get("description")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO vertices(name, netherx, netherz, overx, overz, description) values (?, ?, ?, ?, ?, ?)", (name, netherx, netherz, overx, overz, description))
+            cursor.execute("INSERT INTO vertices(name, netherx, netherz, overx, overz, description) values (%s, %s, %s, %s, %s, %s)", (name, netherx, netherz, overx, overz, description))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -88,9 +91,9 @@ def edit_vertex():
         overx = request.form.get("overx")
         overz = request.form.get("overz")
         description = request.form.get("description")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("UPDATE vertices SET name=?, netherx=?, netherz=?, overx=?, overz=?, description=? WHERE id=?", (name, netherx, netherz, overx, overz, description, id))
+            cursor.execute("UPDATE vertices SET name=%s, netherx=%s, netherz=%s, overx=%s, overz=%s, description=%s WHERE id=%s", (name, netherx, netherz, overx, overz, description, id))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -101,9 +104,9 @@ def delete_vertex():
     if request.method == "GET":
         return render_template("delete_entity.html", entity="vertices", id=vert_id)
     else:
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("DELETE FROM vertices WHERE id=?", (vert_id,))
+            cursor.execute("DELETE FROM vertices WHERE id=%s", (vert_id,))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -111,7 +114,7 @@ def delete_vertex():
 @app.route("/api/paths/list", methods=["GET"])
 def get_all_paths():
     paths = []
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
         cursor.execute("SELECT * from paths")
         paths = cursor.fetchall()
@@ -128,9 +131,9 @@ def add_path():
         firstz = request.form.get("firstz")
         secondx = request.form.get("secondx")
         secondz = request.form.get("secondz")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO paths(firstx, firstz, secondx, secondz) values (?, ?, ?, ?)", (firstx, firstz, secondx, secondz))
+            cursor.execute("INSERT INTO paths(firstx, firstz, secondx, secondz) values (%s, %s, %s, %s)", (firstx, firstz, secondx, secondz))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -140,9 +143,9 @@ def edit_path():
     path_id = request.form.get("id") or request.args.get("id")
     if request.method == "GET":
         path = {}
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("SELECT * FROM paths WHERE id=?", (path_id))
+            cursor.execute("SELECT * FROM paths WHERE id=%s", (path_id))
             p = cursor.fetchone()
             cursor.close()
             if p:
@@ -156,9 +159,9 @@ def edit_path():
         firstz = request.form.get("firstz")
         secondx = request.form.get("secondx")
         secondz = request.form.get("secondz")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("UPDATE paths SET firstx=?, firstz=?, secondx=?, secondz=? WHERE id=?", (firstx, firstz, secondx, secondz, path_id))
+            cursor.execute("UPDATE paths SET firstx=%s, firstz=%s, secondx=%s, secondz=%s WHERE id=%s", (firstx, firstz, secondx, secondz, path_id))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -169,18 +172,18 @@ def delete_path():
     if request.method == "GET":
         return render_template("delete_entity.html", entity="paths", id=path_id)
     else:
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("DELETE FROM paths WHERE id=?", (path_id,))
+            cursor.execute("DELETE FROM paths WHERE id=%s", (path_id,))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
 
 def _get_villagers_for_vertex(vert_id):
     villagers = []
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
-        cursor.execute("SELECT * from villagers where locationid=?", (vert_id,))
+        cursor.execute("SELECT * from villagers where locationid=%s", (vert_id,))
         villagers = cursor.fetchall()
         cursor.close()
         villagers = [{"id": v[0], "locationId": v[1], "name": v[2], "type": v[3]} for v in villagers]
@@ -190,9 +193,9 @@ def _get_villagers_for_vertex(vert_id):
 
 def _get_villager(villager_id):
         villager = {}
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("SELECT * FROM villagers WHERE id=?", (villager_id,))
+            cursor.execute("SELECT * FROM villagers WHERE id=%s", (villager_id,))
             v = cursor.fetchone()
             cursor.close()
             if v:
@@ -202,7 +205,7 @@ def _get_villager(villager_id):
 @app.route("/api/villagers/list", methods=["GET"])
 def get_all_villagers():
     villagers = []
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
         cursor.execute("SELECT * from villagers")
         villagers = cursor.fetchall()
@@ -214,9 +217,9 @@ def get_all_villagers():
 
 def get_all_trades_for_villager(villager_id):
     trades = []
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
-        cursor.execute("SELECT * from trades where villagerid=?", (villager_id,))
+        cursor.execute("SELECT * from trades where villagerid=%s", (villager_id,))
         trades = cursor.fetchall()
         cursor.close()
         trades = [{"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7]} for t in trades]
@@ -230,9 +233,9 @@ def add_villager():
         locationid = request.form.get("locationid")
         name = request.form.get("name")
         type = request.form.get("type")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO villagers(locationid, name, type) values (?, ?, ?)", (locationid, name, type))
+            cursor.execute("INSERT INTO villagers(locationid, name, type) values (%s, %s, %s)", (locationid, name, type))
             dbconn.commit()
             villager_id = cursor.lastrowid
             cursor.close()
@@ -252,9 +255,9 @@ def edit_villager():
         locationid = request.form.get("locationid")
         name = request.form.get("name")
         type = request.form.get("type")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("UPDATE villagers SET locationid=?, name=?, type=? WHERE id=?", (locationid, name, type, villager_id))
+            cursor.execute("UPDATE villagers SET locationid=%s, name=%s, type=%s WHERE id=%s", (locationid, name, type, villager_id))
             dbconn.commit()
             cursor.close()
         return jsonify(_get_villager(villager_id))
@@ -265,9 +268,9 @@ def delete_villager():
     if request.method == "GET":
         return render_template("delete_entity.html", entity="villagers", id=villager_id)
     else:
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("DELETE FROM villagers WHERE id=?", (villager_id,))
+            cursor.execute("DELETE FROM villagers WHERE id=%s", (villager_id,))
             dbconn.commit()
             cursor.close()
         return jsonify({"id": villager_id})
@@ -275,7 +278,7 @@ def delete_villager():
 @app.route("/api/trades/list", methods=["GET"])
 def get_all_trades():
     trades = []
-    with sqlite3.connect(DB_NAME) as dbconn:
+    with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
         cursor = dbconn.cursor()
         cursor.execute("SELECT * from trades")
         trades = cursor.fetchall()
@@ -295,9 +298,9 @@ def add_trade():
         item1amt = request.form.get("item1amt")
         item2amt = request.form.get("item2amt")
         item3amt = request.form.get("item3amt")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO trades(villagerid, item1, item2, item3, item1amt, item2amt, item3amt) values (?, ?, ?, ?, ?, ?, ?)", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt))
+            cursor.execute("INSERT INTO trades(villagerid, item1, item2, item3, item1amt, item2amt, item3amt) values (%s, %s, %s, %s, %s, %s, %s)", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt))
             dbconn.commit()
             cursor.close()
         return jsonify(get_all_trades_for_villager(villagerid))
@@ -307,9 +310,9 @@ def edit_trade():
     trade_id = request.form.get("id") or request.args.get("id")
     if request.method == "GET":
         trade = {}
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("SELECT * FROM trades WHERE id=?", (trade_id,))
+            cursor.execute("SELECT * FROM trades WHERE id=%s", (trade_id,))
             t = cursor.fetchone()
             cursor.close()
             if t:
@@ -327,9 +330,9 @@ def edit_trade():
         item1amt = request.form.get("item1amt")
         item2amt = request.form.get("item2amt")
         item3amt = request.form.get("item3amt")
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("UPDATE trades SET villagerid=?, item1=?, item2=?, item3=?, item1amt=?, item2amt=?, item3amt=? WHERE id=?", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt, trade_id))
+            cursor.execute("UPDATE trades SET villagerid=%s, item1=%s, item2=%s, item3=%s, item1amt=%s, item2amt=%s, item3amt=%s WHERE id=%s", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt, trade_id))
             dbconn.commit()
             cursor.close()
         return jsonify(get_all_trades_for_villager(villagerid))
@@ -340,9 +343,9 @@ def delete_trade():
     if request.method == "GET":
         return render_template("delete_entity.html", entity="trades", id=trade_id)
     else:
-        with sqlite3.connect(DB_NAME) as dbconn:
+        with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("DELETE FROM trades WHERE id=?", (trade_id,))
+            cursor.execute("DELETE FROM trades WHERE id=%s", (trade_id,))
             dbconn.commit()
             cursor.close()
         return jsonify(trade_id)
