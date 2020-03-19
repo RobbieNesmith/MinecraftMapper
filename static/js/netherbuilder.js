@@ -148,7 +148,7 @@ function setupMap() {
   theCrs.transformation = new L.Transformation(0.001, 0, 0.001, 0);
   
   let center = {lat: 0, lng: 0};
-  let zoom = 6;
+  let zoom = 13;
   
   if (typeof(Storage) !== "undefined") {
     let storedCenter = localStorage.getItem("center");
