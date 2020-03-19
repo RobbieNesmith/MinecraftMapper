@@ -4,7 +4,7 @@
   height: 16px;
   margin-right: 1rem;
 }
- display: inline-block;
+
 .dropdownScroller {
   max-height: 80vh;
   overflow: auto;
