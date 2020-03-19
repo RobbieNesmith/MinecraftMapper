@@ -198,14 +198,6 @@ function setupMap() {
 
   L.simpleGraticule(graticuleOptions).addTo(map);
   
-  let worldBorder = L.circle([0, 0], {
-    color: 'red',
-    fillOpacity: 0,
-    radius: 6250,
-    interactive: false,
-    clickable: false,
-  }).addTo(map);
-  
   fetch("/api/vertices/list")
       .then(res => res.json())
       .then(json => {
