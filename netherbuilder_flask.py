@@ -233,13 +233,16 @@ def add_villager():
         locationid = request.form.get("locationid")
         name = request.form.get("name")
         type = request.form.get("type")
+        villager_result = {}
         with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO villagers(locationid, name, type) values (%s, %s, %s)", (locationid, name, type))
+            cursor.execute("INSERT INTO villagers(Id, locationid, name, type) values (DEFAULT, %s, %s, %s) returning *", (locationid, name, type))
+            insert_result = cursor.fetchone()
+            villager_result = {"id": insert_result[0], "locationid": insert_result[1], "name": insert_result[2], "type": insert_result[3], "trades": []}
             dbconn.commit()
             villager_id = cursor.lastrowid
             cursor.close()
-        return jsonify(_get_villager(villager_id))   
+        return jsonify(villager_result)   
 
 @app.route("/api/villagers/edit", methods=["GET", "POST"])
 def edit_villager():
