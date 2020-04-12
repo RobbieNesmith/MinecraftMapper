@@ -108,6 +108,7 @@ class TradeSet extends React.Component {
     formData.append("item2amt", trade.item2amt);
     formData.append("item3", trade.item3);
     formData.append("item3amt", trade.item3amt);
+    formData.append("enchantment", trade.enchantment);
     fetch("/api/trades/edit", {
       method: "POST",
       body: formData

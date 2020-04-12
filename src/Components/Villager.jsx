@@ -41,6 +41,7 @@ class Villager extends React.Component {
     formData.append("item2amt", this.state.newTrade.item2amt);
     formData.append("item3", this.state.newTrade.item3);
     formData.append("item3amt", this.state.newTrade.item3amt);
+    formData.append("enchantment", this.state.newTrade.enchantment);
     
     fetch("/api/trades/add", {
       method: "POST",
@@ -152,6 +153,14 @@ class Villager extends React.Component {
                   <Form.Group controlId="NewTradeItem3Amt">
                     <Form.Label>Trade item 3 Amount</Form.Label>
                     <Form.Control type="number"  onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item3amt: event.target.value}}) } />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs="12">
+                  <Form.Group controlId="NewTradeEnchantment">
+                    <Form.Label>Trade Enchantment</Form.Label>
+                    <ItemSelector changeHandler={ (enchantment) => this.setState({newTrade: {...this.state.newTrade, enchantment: enhantment}}) } />
                   </Form.Group>
                 </Col>
               </Row>

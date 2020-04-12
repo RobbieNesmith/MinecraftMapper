@@ -22,7 +22,7 @@ def init_tables():
         if "villagers" not in existing_tables:
             cursor.execute("CREATE TABLE villagers (id serial primary key, locationid integer NOT NULL, name text, type text, FOREIGN KEY(locationid) REFERENCES vertices(id))")
         if "trades" not in existing_tables:
-            cursor.execute("CREATE TABLE trades (id serial primary key, villagerid integer NOT NULL, item1 varchar, item2 varchar, item3 varchar, item1amt integer, item2amt integer, item3amt integer, FOREIGN KEY(villagerid) REFERENCES villagers(id))")
+            cursor.execute("CREATE TABLE trades (id serial primary key, villagerid integer NOT NULL, item1 varchar, item2 varchar, item3 varchar, item1amt integer, item2amt integer, item3amt integer, enchantment text, FOREIGN KEY(villagerid) REFERENCES villagers(id))")
         dbconn.commit()
         cursor.close()
 
@@ -286,7 +286,7 @@ def get_all_trades():
         cursor.execute("SELECT * from trades")
         trades = cursor.fetchall()
         cursor.close()
-        trades = [{"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7]} for t in trades]
+        trades = [{"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7], "enchantment": t[8]} for t in trades]
     return jsonify({"trades": trades})
 
 @app.route("/api/trades/add", methods=["GET", "POST"])
@@ -301,9 +301,10 @@ def add_trade():
         item1amt = request.form.get("item1amt")
         item2amt = request.form.get("item2amt")
         item3amt = request.form.get("item3amt")
+        enchantment = request.form.get("enchantment")
         with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO trades(villagerid, item1, item2, item3, item1amt, item2amt, item3amt) values (%s, %s, %s, %s, %s, %s, %s)", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt))
+            cursor.execute("INSERT INTO trades(villagerid, item1, item2, item3, item1amt, item2amt, item3amt, enchantment) values (%s, %s, %s, %s, %s, %s, %s, %s)", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt, enchantment))
             dbconn.commit()
             cursor.close()
         return jsonify(get_all_trades_for_villager(villagerid))
@@ -319,7 +320,7 @@ def edit_trade():
             t = cursor.fetchone()
             cursor.close()
             if t:
-                trade = {"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7]}
+                trade = {"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7], "enchantment": t[8]}
         if trade:
             return render_template("edit_trade.html", trade=trade)
         else:
@@ -333,9 +334,10 @@ def edit_trade():
         item1amt = request.form.get("item1amt")
         item2amt = request.form.get("item2amt")
         item3amt = request.form.get("item3amt")
+        enchantment = request.form.get("enchantment")
         with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("UPDATE trades SET villagerid=%s, item1=%s, item2=%s, item3=%s, item1amt=%s, item2amt=%s, item3amt=%s WHERE id=%s", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt, trade_id))
+            cursor.execute("UPDATE trades SET villagerid=%s, item1=%s, item2=%s, item3=%s, item1amt=%s, item2amt=%s, item3amt=%s, enchantment=%s WHERE id=%s", (villagerid, item1, item2, item3, item1amt, item2amt, item3amt, enchantment, trade_id))
             dbconn.commit()
             cursor.close()
         return jsonify(get_all_trades_for_villager(villagerid))

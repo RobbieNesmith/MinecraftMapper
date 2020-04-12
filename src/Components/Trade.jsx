@@ -40,6 +40,7 @@ class Trade extends React.Component {
                 <Col xs={6}>
                   <ItemDisplayer name={ offer.item3 } />
                   <span>{ offer.item3amt > 0 ? offer.item3amt : "" }</span>
+                  <span>{ offer.enchantment }</span>
                 </Col>
               </Row>
             </Container>
@@ -120,6 +121,17 @@ class Trade extends React.Component {
                       value={ this.state.newTrade.item3amt }
                       type="number"
                       onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, item3amt: event.target.value}}) }
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs="12">
+                  <Form.Group controlId="EditTradeEnchantment">
+                    <Form.Label>Enchantment</Form.Label>
+                    <Form.Control
+                      value={ this.state.newTrade.enchantment }
+                      onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, enchantment: event.target.value}}) }
                     />
                   </Form.Group>
                 </Col>
