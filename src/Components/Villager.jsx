@@ -167,7 +167,7 @@ class Villager extends React.Component {
                 <Col xs="12">
                   <Form.Group controlId="NewTradeEnchantment">
                     <Form.Label>Trade Enchantment</Form.Label>
-                    <ItemSelector changeHandler={ (enchantment) => this.setState({newTrade: {...this.state.newTrade, enchantment: enhantment}}) } />
+                    <Form.Control onChange={ (event) => this.setState({newTrade: {...this.state.newTrade, enchantment: event.target.value}}) } />
                   </Form.Group>
                 </Col>
               </Row>
