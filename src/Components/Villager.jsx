@@ -13,6 +13,8 @@ import Modal from "react-bootstrap/Modal";
 import Trade from "./Trade";
 import ItemSelector from "./ItemSelector";
 
+const validTypes = ["Armorer", "Butcher", "Cartographer", "Cleric", "Farmer", "Fisherman", "Fletcher", "Leatherworker", "Librarian", "Mason", "Shepherd", "Toolsmith", "Weaponsmith"];
+
 class Villager extends React.Component {
   constructor(props) {
     super(props);
@@ -52,11 +54,16 @@ class Villager extends React.Component {
   }
   
   render() {
+    let profImg = null;
+    if (validTypes.includes(this.props.type)) {
+      profImg = <img className="professionimage" src={ `/static/img/professions/${this.props.type}.png` } />;
+    }
     return (
       <Card>
         <Card.Header>
           <div className="spaceItems">
             <h3>
+	      { profImg }
               { this.props.name }
             </h3>
             <span>
