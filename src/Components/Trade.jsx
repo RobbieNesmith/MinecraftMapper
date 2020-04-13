@@ -30,17 +30,13 @@ class Trade extends React.Component {
             <Container>
               <Row>
                 <Col xs={3}>
-                  <ItemDisplayer name={ offer.item1 } />
-                  <span>{ offer.item1amt > 0 ? offer.item1amt : "" }</span>
+                  <ItemDisplayer name={ offer.item1 } count={ offer.item1amt > 0 ? offer.item1amt : null } />
                 </Col>
                 <Col xs={3}>
-                  <ItemDisplayer name={ offer.item2 } />
-                  <span>{ offer.item2amt > 0 ? offer.item2amt : "" }</span>
+                  <ItemDisplayer name={ offer.item2 } count={ offer.item2amt > 0 ? offer.item2amt : null } />
                 </Col>
                 <Col xs={6}>
-                  <ItemDisplayer name={ offer.item3 } />
-                  <span>{ offer.item3amt > 0 ? offer.item3amt : "" }</span>
-                  <span>{ offer.enchantment }</span>
+                  <ItemDisplayer name={ offer.item3 } count={ offer.item3amt > 0 ? offer.item3amt : null } enchantment={ offer.enchantment } />
                 </Col>
               </Row>
             </Container>
