@@ -222,7 +222,7 @@ def get_all_trades_for_villager(villager_id):
         cursor.execute("SELECT * from trades where villagerid=%s", (villager_id,))
         trades = cursor.fetchall()
         cursor.close()
-        trades = [{"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7]} for t in trades]
+        trades = [{"id": t[0], "villagerId": t[1], "item1": t[2], "item2": t[3], "item3": t[4], "item1amt": t[5], "item2amt": t[6], "item3amt": t[7], "enchantment": t[8]} for t in trades]
     return trades
 
 @app.route("/api/villagers/add", methods=["GET", "POST"])
