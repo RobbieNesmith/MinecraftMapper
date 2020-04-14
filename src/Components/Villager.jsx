@@ -28,10 +28,12 @@ class Villager extends React.Component {
         item2: "",
         item2amt: 0,
         item3: "",
-        item3amt: 0
+        item3amt: 0,
+        enchantment: ""
       }
     }
     this.addTradeHandler = this.addTradeHandler.bind(this);
+    this.cancelAddHandler = this.cancelAddHandler.bind(this);
   }
   
   addTradeHandler() {
@@ -43,14 +45,31 @@ class Villager extends React.Component {
     formData.append("item2amt", this.state.newTrade.item2amt);
     formData.append("item3", this.state.newTrade.item3);
     formData.append("item3amt", this.state.newTrade.item3amt);
-    formData.append("enchantment", this.state.newTrade.enchantment);
+    if (this.state.newTrade.enchantment) {
+      formData.append("enchantment", this.state.newTrade.enchantment);
+    }
     
     fetch("/api/trades/add", {
       method: "POST",
       body: formData
     })
     .then(res => res.json())
-    .then(json => this.props.setTradesHandler(this.props.id, json));
+    .then(json => {
+      this.setState({ newTrade: {item1: "", item1amt: 0, item2: "", item2amt: 0, item3: "", item3amt: 0, enchantment: ""} }, () => this.props.setTradesHandler(this.props.id, json))
+    });
+  }
+
+  cancelAddHandler() {
+    this.setState({showAddTrade: false,
+      newTrade: {
+        item1: "",
+        item1amt: 0,
+        item2: "",
+        item2amt: 0,
+        item3: "",
+        item3amt: 0,
+        enchantment: ""
+      }});
   }
   
   render() {
@@ -112,7 +131,7 @@ class Villager extends React.Component {
 
         <Modal
           show={ this.state.showAddTrade  }
-          onHide={ () => this.setState({showAddTrade: false}) }
+          onHide={ this.cancelAddHandler }
         >
           <Modal.Header closeButton>
             <Modal.Title>Add New Trade for { this.props.name }</Modal.Title>
@@ -175,7 +194,7 @@ class Villager extends React.Component {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={ ()=>this.setState({showAddTrade: false}, this.addTradeHandler) }>Add</Button>
-            <Button variant="secondary" onClick={ () => this.setState({showAddTrade: false}) }>Cancel</Button>
+            <Button variant="secondary" onClick={ this.cancelAddHandler }>Cancel</Button>
           </Modal.Footer>
         </Modal>
       </Card>
