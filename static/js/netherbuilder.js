@@ -108,6 +108,10 @@ function generatePathPopup(path) {
 function populateEditVertexForm(vertex) {
   let editVertexForm = document.getElementById("editVertexForm");
   let vertexNameTitle = document.getElementById("editVertName");
+  let vertexIconSelect = document.getElementById("editpoiicon");
+  if (vertex.icon === null) {
+    vertex.icon = "";
+  }
   vertexNameTitle.innerText = vertex.name;
   editVertexForm.name.value = vertex.name;
   editVertexForm.id.value = vertex.id;
@@ -116,6 +120,24 @@ function populateEditVertexForm(vertex) {
   editVertexForm.overx.value = vertex.overworldCoords[0];
   editVertexForm.overz.value = vertex.overworldCoords[1];
   editVertexForm.description.value = vertex.description;
+  fetch("/api/mapicons/list")
+    .then(r => r.json())
+    .then(json => {
+      while (vertexIconSelect.children.length) {
+        vertexIconSelect.removeChild(vertexIconSelect.children[vertexIconSelect.children.length - 1]);
+      }
+      let defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.innerText = "default";
+      vertexIconSelect.appendChild(defaultOption);
+      for (let icon of json) {
+        let o = document.createElement("option");
+        o.innerText = icon;
+        o.value = icon;
+        vertexIconSelect.appendChild(o);
+      }
+      editVertexForm.icon.value = vertex.icon;
+    })
 }
 
 function populateEditPathForm(path) {
@@ -144,6 +166,16 @@ function renderVertexData(map, vertexJson, dimension) {
     let overworldCoords = L.latLng({lng: vertex.overworldCoords[0], lat: vertex.overworldCoords[1]});
     let netherMarker = L.marker(netherCoords, {title: vertex.name});
     let overworldMarker = L.marker(overworldCoords, {title: vertex.name});
+    if (vertex.icon) {
+      let icon = L.icon({
+        iconUrl: `/static/img/mapicons/${vertex.icon}`,
+        iconSize: [32, 32],
+        iconAnchor: [15, 31],
+        popupAnchor: [0, -31]
+      });
+      netherMarker = L.marker(netherCoords, {title: vertex.name, icon: icon});
+      overworldMarker = L.marker(overworldCoords, {title: vertex.name, icon: icon});
+    }
     netherMarker.bindPopup(generateVertexPopup(vertex));
     overworldMarker.bindPopup(generateVertexPopup(vertex));
     netherLayerGroup.addLayer(netherMarker);

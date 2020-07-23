@@ -36,7 +36,7 @@ def _list_vertices():
         cursor = dbconn.cursor()
         cursor.execute("SELECT * from vertices")
         verts = cursor.fetchall()
-        verts = [{"id": v[0], "name": v[1], "netherCoords": [v[2], v[3]], "overworldCoords": [v[4], v[5]], "description": v[6]} for v in verts]
+        verts = [{"id": v[0], "name": v[1], "netherCoords": [v[2], v[3]], "overworldCoords": [v[4], v[5]], "description": v[6], "icon": v[7]} for v in verts]
         cursor.close()
     return verts
 
@@ -47,7 +47,7 @@ def _get_vertex(vert_id):
         cursor.execute("SELECT * from vertices where id=%s", (vert_id,))
         v = cursor.fetchone()
         if v:
-            vertex = {"id": v[0], "name": v[1], "netherCoords": [v[2], v[3]], "overworldCoords": [v[4], v[5]], "description": v[6]}
+            vertex = {"id": v[0], "name": v[1], "netherCoords": [v[2], v[3]], "overworldCoords": [v[4], v[5]], "description": v[6], "icon": v[7]}
         cursor.close()
     return vertex
 
@@ -67,9 +67,10 @@ def add_vertex():
         overx = request.form.get("overx")
         overz = request.form.get("overz")
         description = request.form.get("description")
+        icon = request.form.get("icon")
         with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("INSERT INTO vertices(name, netherx, netherz, overx, overz, description) values (%s, %s, %s, %s, %s, %s)", (name, netherx, netherz, overx, overz, description))
+            cursor.execute("INSERT INTO vertices(name, netherx, netherz, overx, overz, description, icon) values (%s, %s, %s, %s, %s, %s, %s)", (name, netherx, netherz, overx, overz, description, icon))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -91,9 +92,10 @@ def edit_vertex():
         overx = request.form.get("overx")
         overz = request.form.get("overz")
         description = request.form.get("description")
+        icon = request.form.get("icon")
         with psycopg2.connect(DB_URL, sslmode='require') as dbconn:
             cursor = dbconn.cursor()
-            cursor.execute("UPDATE vertices SET name=%s, netherx=%s, netherz=%s, overx=%s, overz=%s, description=%s WHERE id=%s", (name, netherx, netherz, overx, overz, description, id))
+            cursor.execute("UPDATE vertices SET name=%s, netherx=%s, netherz=%s, overx=%s, overz=%s, description=%s, icon=%s WHERE id=%s", (name, netherx, netherz, overx, overz, description, icon, id))
             dbconn.commit()
             cursor.close()
         return redirect(url_for("map_page"))
@@ -367,6 +369,15 @@ def list_trades_for_vertex():
     villagers = _get_villagers_for_vertex(vert_id)
     
     return render_template("tradelist.html", vertex=vertex, itemDict=itemJson, villagers=json.dumps(villagers))
+
+@app.route("/api/mapicons/list", methods=["GET"])
+def list_mapicons():
+  icon_urls=[]
+  icons = os.walk("static/img/mapicons")
+  for directory in icons:
+    for icon in directory[2]:
+      icon_urls.append(os.path.join(directory[0], icon).split("/", 3)[3])
+  return jsonify(icon_urls)
 
 if __name__ == "__main__":
     init_tables()
