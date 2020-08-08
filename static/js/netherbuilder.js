@@ -3,6 +3,35 @@ let netherLayerGroup = undefined;
 let overworldLayerGroup = undefined;
 let dimension = "nether";
 
+function getMapIcons() {
+  let addVertexForm = document.getElementById("addVertexForm");
+  let editVertexForm = document.getElementById("editVertexForm");
+  let addVertexIconSelect = document.getElementById("newpoiicon");
+  let editVertexIconSelect = document.getElementById("editpoiicon");
+  fetch("/api/mapicons/list")
+    .then(r => r.json())
+    .then(json => {
+      let addDefaultOption = document.createElement("option");
+      let editDefaultOption = document.createElement("option");
+      addDefaultOption.value = "";
+      addDefaultOption.innerText = "default";
+      editDefaultOption.value = "";
+      editDefaultOption.innerText = "default";
+      addVertexIconSelect.appendChild(addDefaultOption);
+      editVertexIconSelect.appendChild(editDefaultOption);
+      for (let icon of json) {
+        let ao = document.createElement("option");
+        let eo = document.createElement("option");
+        ao.innerText = icon;
+        ao.value = icon;
+        eo.innerText = icon;
+        eo.value = icon;
+        addVertexIconSelect.appendChild(ao);
+        editVertexIconSelect.appendChild(eo);
+      }
+    })
+}
+
 function generateVertexPopup(vertex) {
   let popupContainer = document.createElement("div");
   let popupHeader = document.createElement("h4");
@@ -108,10 +137,10 @@ function generatePathPopup(path) {
 function populateEditVertexForm(vertex) {
   let editVertexForm = document.getElementById("editVertexForm");
   let vertexNameTitle = document.getElementById("editVertName");
-  let vertexIconSelect = document.getElementById("editpoiicon");
   if (vertex.icon === null) {
     vertex.icon = "";
   }
+  editVertexForm.icon.value = vertex.icon;
   vertexNameTitle.innerText = vertex.name;
   editVertexForm.name.value = vertex.name;
   editVertexForm.id.value = vertex.id;
@@ -120,24 +149,6 @@ function populateEditVertexForm(vertex) {
   editVertexForm.overx.value = vertex.overworldCoords[0];
   editVertexForm.overz.value = vertex.overworldCoords[1];
   editVertexForm.description.value = vertex.description;
-  fetch("/api/mapicons/list")
-    .then(r => r.json())
-    .then(json => {
-      while (vertexIconSelect.children.length) {
-        vertexIconSelect.removeChild(vertexIconSelect.children[vertexIconSelect.children.length - 1]);
-      }
-      let defaultOption = document.createElement("option");
-      defaultOption.value = "";
-      defaultOption.innerText = "default";
-      vertexIconSelect.appendChild(defaultOption);
-      for (let icon of json) {
-        let o = document.createElement("option");
-        o.innerText = icon;
-        o.value = icon;
-        vertexIconSelect.appendChild(o);
-      }
-      editVertexForm.icon.value = vertex.icon;
-    })
 }
 
 function populateEditPathForm(path) {
@@ -313,4 +324,5 @@ function setupMap() {
   } else {
     overworldLayerGroup.addTo(map);
   }
+  getMapIcons();
 }
