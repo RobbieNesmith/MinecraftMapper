@@ -241,10 +241,10 @@ function setupMap() {
   
   let theCrs = L.CRS.Simple;
   
-  theCrs.transformation = new L.Transformation(0.001, 0, 0.001, 0);
+  theCrs.transformation = new L.Transformation(1, 0, 1, 0);
   
   let center = {lat: 0, lng: 0};
-  let zoom = 13;
+  let zoom = 0;
 
   if (typeof(Storage) !== "undefined") {
     let storedCenter = localStorage.getItem("center");
@@ -282,6 +282,8 @@ function setupMap() {
   let mapOptions = {
       center: center,
       zoom: zoom,
+      minZoom: -4,
+      maxZoom: 0,
       crs: theCrs
   };
 
@@ -292,20 +294,25 @@ function setupMap() {
     map.on("zoomend", () => localStorage.setItem("zoom", map.getZoom()));
   }
   
+
   let graticuleOptions = {
       interval: 20,
       showOriginLabel: true,
       redraw: 'move',
       zoomIntervals: [
-      {start: 0, end: 5, interval: 10000},
-      {start: 6, end: 8, interval: 1000},
-      {start: 9, end: 11, interval: 100},
-      {start: 12, end: 20, interval: 10}
+      {start: -4, end: -4, interval: 2048},
+      {start: -3, end: -3, interval: 1024},
+      {start: -2, end: -2, interval: 512},
+      {start: -1, end: -1, interval: 256},
+      {start: 0, end: 0, interval: 128},
   ]};
 
   L.simpleGraticule(graticuleOptions).addTo(map);
   
   resetLayerGroups();
+  overworldLayerGroup.addLayer(L.tileLayer("https://raw.githubusercontent.com/RobbieNesmith/RaubriecraftMapTiles/master/tiles/overworld/zoom.{z}/tile.{x}.{y}.jpg", {"minZoom": -4, "maxZoom": 0}));
+  netherLayerGroup.addLayer(L.tileLayer("https://raw.githubusercontent.com/RobbieNesmith/RaubriecraftMapTiles/master/tiles/nether/zoom.{z}/tile.{x}.{y}.jpg", {"minZoom": -4, "maxZoom": 0}));
+
 
   fetch("/api/vertices/list")
       .then(res => res.json())
