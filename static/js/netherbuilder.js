@@ -335,5 +335,25 @@ function setupMap() {
   } else {
     overworldLayerGroup.addTo(map);
   }
+  
+  map.on("click", function(ev) {
+    openModalWithCoordinates(ev.latlng.lng, ev.latlng.lat);
+  });
+  
   getMapIcons();
+}
+
+function openModalWithCoordinates(x, z) {
+  $("#vertexModal").modal();
+  if (dimension === "nether") {
+    $("#poiNetherX").val(x);
+    $("#poiNetherZ").val(z);
+    $("#poiOverworldX").val(x * 8);
+    $("#poiOverworldZ").val(z * 8);
+  } else {
+    $("#poiNetherX").val(Math.floor(x / 8));
+    $("#poiNetherZ").val(Math.floor(z / 8));
+    $("#poiOverworldX").val(x);
+    $("#poiOverworldZ").val(z);
+  }
 }
