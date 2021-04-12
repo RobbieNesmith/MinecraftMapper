@@ -5,6 +5,8 @@ import psycopg2
 
 DB_NAME = "nethernetwork.db"
 DB_URL = os.environ["DATABASE_URL"]
+NETHER_MAP_SOURCE = os.environ["NETHER_MAP_SOURCE"]
+OVERWORLD_MAP_SOURCE = os.environ["OVERWORLD_MAP_SOURCE"]
 
 app = Flask(__name__)
 
@@ -28,7 +30,7 @@ def init_tables():
 
 @app.route("/", methods=["GET"])
 def map_page():
-    return render_template("netherbuilder.html")
+    return render_template("netherbuilder.html", netherMapSource=NETHER_MAP_SOURCE, overworldMapSource=OVERWORLD_MAP_SOURCE)
 
 def _list_vertices():
     verts = []

@@ -234,6 +234,10 @@ function toggleDimension() {
 }
 
 function setupMap() {
+	let mapSources = document.getElementById("mapSources").dataset;
+	let netherMapSource = mapSources.netherMapSource;
+	let overworldMapSource = mapSources.overworldMapSource;
+	
   if (map) {
     map.off();
     map.remove();
@@ -310,8 +314,8 @@ function setupMap() {
   L.simpleGraticule(graticuleOptions).addTo(map);
   
   resetLayerGroups();
-  overworldLayerGroup.addLayer(L.tileLayer("https://raw.githubusercontent.com/RobbieNesmith/RaubriecraftMapTiles/master/tiles/overworld/zoom.{z}/tile.{x}.{y}.jpg", {"minZoom": -4, "maxZoom": 0}));
-  netherLayerGroup.addLayer(L.tileLayer("https://raw.githubusercontent.com/RobbieNesmith/RaubriecraftMapTiles/master/tiles/nether/zoom.{z}/tile.{x}.{y}.jpg", {"minZoom": -4, "maxZoom": 0}));
+  overworldLayerGroup.addLayer(L.tileLayer(overworldMapSource, {"minZoom": -4, "maxZoom": 0}));
+  netherLayerGroup.addLayer(L.tileLayer(netherMapSource, {"minZoom": -4, "maxZoom": 0}));
 
 
   fetch("/api/vertices/list")
