@@ -16,7 +16,7 @@ def init_tables():
         existing_tables = cursor.fetchall()
         existing_tables = [a[0] for a in existing_tables]
         if "vertices" not in existing_tables:
-            cursor.execute("CREATE TABLE vertices (id serial primary key, name text, netherx real, netherz real, overx real, overz real, description varchar)")
+            cursor.execute("CREATE TABLE vertices (id serial primary key, name text, netherx real, netherz real, overx real, overz real, description varchar, icon varchar)")
         if "paths" not in existing_tables:
             cursor.execute("CREATE TABLE paths (id serial primary key, firstx real, firstz real, secondx real, secondz real)")
         if "villagers" not in existing_tables:
