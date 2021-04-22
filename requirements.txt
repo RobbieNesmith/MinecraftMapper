@@ -5,4 +5,5 @@ itsdangerous==1.1.0
 Jinja2==2.10.3
 MarkupSafe==1.1.1
 psycopg2-binary==2.8.4
+python-dotenv==0.17.0
 Werkzeug==0.16.0

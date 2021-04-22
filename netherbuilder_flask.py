@@ -3,6 +3,10 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 import os
 import psycopg2
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 DB_NAME = "nethernetwork.db"
 DB_URL = os.environ["DATABASE_URL"]
 NETHER_MAP_SOURCE = os.environ["NETHER_MAP_SOURCE"]
