@@ -235,8 +235,11 @@ function toggleDimension() {
 
 function setupMap() {
 	let mapSources = document.getElementById("mapSources").dataset;
+        let mapZooms = document.getElementById("mapZooms").dataset;
 	let netherMapSource = mapSources.netherMapSource;
 	let overworldMapSource = mapSources.overworldMapSource;
+        let minZoom = mapZooms.minZoom;
+        let maxZoom = mapZooms.maxZoom;
 	
   if (map) {
     map.off();
@@ -286,8 +289,8 @@ function setupMap() {
   let mapOptions = {
       center: center,
       zoom: zoom,
-      minZoom: -4,
-      maxZoom: 0,
+      minZoom: minZoom,
+      maxZoom: maxZoom,
       crs: theCrs
   };
 
@@ -314,8 +317,8 @@ function setupMap() {
   L.simpleGraticule(graticuleOptions).addTo(map);
   
   resetLayerGroups();
-  overworldLayerGroup.addLayer(L.tileLayer(overworldMapSource, {"minZoom": -4, "maxZoom": 0}));
-  netherLayerGroup.addLayer(L.tileLayer(netherMapSource, {"minZoom": -4, "maxZoom": 0}));
+  overworldLayerGroup.addLayer(L.tileLayer(overworldMapSource, {"minZoom": minZoom, "maxZoom": maxZoom}));
+  netherLayerGroup.addLayer(L.tileLayer(netherMapSource, {"minZoom": minZoom, "maxZoom": maxZoom}));
 
 
   fetch("/api/vertices/list")

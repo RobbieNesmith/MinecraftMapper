@@ -11,6 +11,8 @@ DB_NAME = "nethernetwork.db"
 DB_URL = os.environ["DATABASE_URL"]
 NETHER_MAP_SOURCE = os.environ["NETHER_MAP_SOURCE"]
 OVERWORLD_MAP_SOURCE = os.environ["OVERWORLD_MAP_SOURCE"]
+MIN_ZOOM = os.getenv("MIN_ZOOM", -4)
+MAX_ZOOM = os.getenv("MAX_ZOOM", 0)
 
 app = Flask(__name__)
 
@@ -34,7 +36,7 @@ def init_tables():
 
 @app.route("/", methods=["GET"])
 def map_page():
-    return render_template("netherbuilder.html", netherMapSource=NETHER_MAP_SOURCE, overworldMapSource=OVERWORLD_MAP_SOURCE)
+    return render_template("netherbuilder.html", netherMapSource=NETHER_MAP_SOURCE, overworldMapSource=OVERWORLD_MAP_SOURCE, minZoom=MIN_ZOOM, maxZoom=MAX_ZOOM)
 
 def _list_vertices():
     verts = []
