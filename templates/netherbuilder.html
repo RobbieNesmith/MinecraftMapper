@@ -32,9 +32,18 @@
       <div class="mb-2">
         <button id="newPath" class="btn btn-primary" data-toggle="modal" data-target="#pathModal">New path segment</button>
       </div>
-      <div>
+      <div class="mb-2">
         <button id="toggleDimension" onclick="toggleDimension()" class="btn btn-success">Show Overworld Locations</button>
       </div>
+      {% if versions %}
+      <div>
+        <select class="form-control">
+        {% for version in versions %}
+          <option id="{{ version["sources"] }}">{{ version["message"] }}</option>
+        {% endfor %}
+        </select>
+      </div>
+      {% endif %}
     </div>
     
     <!-- Add forms -->

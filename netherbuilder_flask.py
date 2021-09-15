@@ -2,6 +2,7 @@ import json
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import os
 import psycopg2
+import requests
 
 from dotenv import load_dotenv
 
@@ -13,6 +14,15 @@ NETHER_MAP_SOURCE = os.environ["NETHER_MAP_SOURCE"]
 OVERWORLD_MAP_SOURCE = os.environ["OVERWORLD_MAP_SOURCE"]
 MIN_ZOOM = os.getenv("MIN_ZOOM", -4)
 MAX_ZOOM = os.getenv("MAX_ZOOM", 0)
+GITHUB_TILES_REPO = os.getenv("GITHUB_TILES_REPO")
+
+versions = []
+if (GITHUB_TILES_REPO):
+    resp = requests.get(f"https://api.github.com/repos/{GITHUB_TILES_REPO}/commits")
+    for commit in resp.json():
+        format_options = {"version": commit["sha"], "s": "{s}", "x": "{x}", "y": "{y}", "z": "{z}"}
+        sources = {"overworld": OVERWORLD_MAP_SOURCE.format(**format_options), "nether": NETHER_MAP_SOURCE.format(**format_options)}
+        versions.append({"sources": json.dumps(sources), "message": commit["commit"]["message"]})
 
 app = Flask(__name__)
 
@@ -36,7 +46,7 @@ def init_tables():
 
 @app.route("/", methods=["GET"])
 def map_page():
-    return render_template("netherbuilder.html", netherMapSource=NETHER_MAP_SOURCE, overworldMapSource=OVERWORLD_MAP_SOURCE, minZoom=MIN_ZOOM, maxZoom=MAX_ZOOM)
+    return render_template("netherbuilder.html", netherMapSource=NETHER_MAP_SOURCE, overworldMapSource=OVERWORLD_MAP_SOURCE, minZoom=MIN_ZOOM, maxZoom=MAX_ZOOM, versions=versions)
 
 def _list_vertices():
     verts = []

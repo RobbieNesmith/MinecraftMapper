@@ -1,6 +1,8 @@
 let map = undefined;
 let netherLayerGroup = undefined;
+let netherTileLayer = undefined;
 let overworldLayerGroup = undefined;
+let overworldTileLayer = undefined;
 let dimension = "nether";
 
 function getMapIcons() {
@@ -317,8 +319,10 @@ function setupMap() {
   L.simpleGraticule(graticuleOptions).addTo(map);
   
   resetLayerGroups();
-  overworldLayerGroup.addLayer(L.tileLayer(overworldMapSource, {"minZoom": minZoom, "maxZoom": maxZoom}));
-  netherLayerGroup.addLayer(L.tileLayer(netherMapSource, {"minZoom": minZoom, "maxZoom": maxZoom}));
+  overworldTileLayer = L.tileLayer(overworldMapSource, {"minZoom": minZoom, "maxZoom": maxZoom});
+  overworldLayerGroup.addLayer(overworldTileLayer);
+  netherTileLayer = L.tileLayer(netherMapSource, {"minZoom": minZoom, "maxZoom": maxZoom});
+  netherLayerGroup.addLayer(netherTileLayer);
 
 
   fetch("/api/vertices/list")
