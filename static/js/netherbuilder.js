@@ -319,6 +319,15 @@ function setupMap() {
   L.simpleGraticule(graticuleOptions).addTo(map);
   
   resetLayerGroups();
+  
+  let versionSelector = document.getElementById("versionSelector");
+
+  if (versionSelector) {
+    let mapSources = JSON.parse(versionSelector.value);
+    netherMapSource = mapSources["nether"];
+    overworldMapSource = mapSources["overworld"];
+  }
+
   overworldTileLayer = L.tileLayer(overworldMapSource, {"minZoom": minZoom, "maxZoom": maxZoom});
   overworldLayerGroup.addLayer(overworldTileLayer);
   netherTileLayer = L.tileLayer(netherMapSource, {"minZoom": minZoom, "maxZoom": maxZoom});
@@ -363,4 +372,11 @@ function openModalWithCoordinates(x, z) {
     $("#poiOverworldX").val(x);
     $("#poiOverworldZ").val(z);
   }
+}
+
+function setTileLayerSources(sources) {
+  console.log("setting tile layer sources");
+  let sourceJson = JSON.parse(sources);
+  netherTileLayer.setUrl(sourceJson["nether"]);
+  overworldTileLayer.setUrl(sourceJson["overworld"]);
 }

@@ -37,9 +37,9 @@
       </div>
       {% if versions %}
       <div>
-        <select class="form-control">
+        <select id="versionSelector" class="form-control" onchange="setTileLayerSources(event.target.value)">
         {% for version in versions %}
-          <option id="{{ version["sources"] }}">{{ version["message"] }}</option>
+          <option value="{{ version["sources"] }}">{{ version["message"] }}</option>
         {% endfor %}
         </select>
       </div>
