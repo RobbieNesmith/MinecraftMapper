@@ -351,11 +351,11 @@ function setupMap() {
   } else {
     overworldLayerGroup.addTo(map);
   }
-  
-  map.on("click", function(ev) {
-    openModalWithCoordinates(ev.latlng.lng, ev.latlng.lat);
+
+  map.on("click", function (ev) {
+    openModalWithCoordinates(Math.floor(ev.latlng.lng), Math.floor(ev.latlng.lat));
   });
-  
+
   getMapIcons();
 }
 
